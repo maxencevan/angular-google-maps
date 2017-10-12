@@ -1,17 +1,17 @@
-import {Injectable, NgZone} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
+import { Injectable, NgZone } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
 
-import {AgmPolygon} from '../../directives/polygon';
-import {GoogleMapsAPIWrapper} from '../google-maps-api-wrapper';
-import {Polygon} from '../google-maps-types';
+import { AgmPolygon } from '../../directives/polygon';
+import { GoogleMapsAPIWrapper } from '../google-maps-api-wrapper';
+import { Polygon } from '../google-maps-types';
 
 @Injectable()
 export class PolygonManager {
   private _polygons: Map<AgmPolygon, Promise<Polygon>> =
-      new Map<AgmPolygon, Promise<Polygon>>();
+  new Map<AgmPolygon, Promise<Polygon>>();
 
-  constructor(private _mapsWrapper: GoogleMapsAPIWrapper, private _zone: NgZone) {}
+  constructor(private _mapsWrapper: GoogleMapsAPIWrapper, private _zone: NgZone) { }
 
   addPolygon(path: AgmPolygon) {
     const polygonPromise = this._mapsWrapper.createPolygon({
@@ -39,7 +39,7 @@ export class PolygonManager {
     return m.then((l: Polygon) => this._zone.run(() => { l.setPaths(polygon.paths); }));
   }
 
-  setPolygonOptions(path: AgmPolygon, options: {[propName: string]: any}): Promise<void> {
+  setPolygonOptions(path: AgmPolygon, options: { [propName: string]: any }): Promise<void> {
     return this._polygons.get(path).then((l: Polygon) => { l.setOptions(options); });
   }
 
@@ -61,6 +61,13 @@ export class PolygonManager {
       this._polygons.get(path).then((l: Polygon) => {
         l.addListener(eventName, (e: T) => this._zone.run(() => observer.next(e)));
       });
+    });
+  }
+
+  getPolygonPath(): Promise<Array<any>> {
+    // get the first path's coordinates as array
+    return this._polygons.values().next().value.then((polygon: any) => {
+      return polygon.getPath().getArray();
     });
   }
 }
