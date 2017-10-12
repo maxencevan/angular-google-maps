@@ -18,7 +18,6 @@
     "angular2"
   ],
   "scripts": {
-    "postinstall": "npm run build",
     "clean": "rimraf dist && rimraf .tmp && mkdir dist && mkdir .tmp && rimraf 'packages/**/*.ngfactory.ts'",
     "prebuild": "npm run clean",
     "build": "npm run lint && npm run scripts && npm run packagejson && npm run copyassets",
