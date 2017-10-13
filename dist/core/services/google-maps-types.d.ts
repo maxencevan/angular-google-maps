@@ -236,7 +236,7 @@ export interface Polyline extends MVCObject {
     getDraggable(): boolean;
     getEditable(): boolean;
     getMap(): GoogleMap;
-    getPath(): Array<LatLng>;
+    getPath(): MVCArray<LatLng>;
     getVisible(): boolean;
     setDraggable(draggable: boolean): void;
     setEditable(editable: boolean): void;
@@ -273,8 +273,8 @@ export interface Polygon extends MVCObject {
     getDraggable(): boolean;
     getEditable(): boolean;
     getMap(): GoogleMap;
-    getPath(): Array<LatLng>;
-    getPaths(): Array<Array<LatLng>>;
+    getPath(): MVCArray<LatLng>;
+    getPaths(): MVCArray<MVCArray<LatLng>>;
     getVisible(): boolean;
     setDraggable(draggable: boolean): void;
     setEditable(editable: boolean): void;
@@ -478,4 +478,16 @@ export interface FullscreenControlOptions {
      * The default position is RIGHT_TOP.
      */
     position?: ControlPosition;
+}
+export interface MVCArray<T> extends MVCObject {
+    clear(): void;
+    getArray(): Array<T>;
+    getAt(i: number): T;
+    getLength(): number;
+    insertAt(i: number, elem: T): void;
+    pop(): T;
+    push(elem: T): number;
+    removeAt(i: number): T;
+    setAt(i: number, elem: T): void;
+    forEach(callback: (elem: T, i: number) => void): void;
 }

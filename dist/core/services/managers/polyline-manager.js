@@ -62,6 +62,10 @@ var PolylineManager = (function () {
             });
         });
     };
+    PolylineManager.prototype.getPath = function (polyline) {
+        return this._polylines.get(polyline)
+            .then(function (polyline) { return polyline.getPath().getArray(); });
+    };
     return PolylineManager;
 }());
 export { PolylineManager };

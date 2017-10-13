@@ -56,11 +56,13 @@ var PolygonManager = (function () {
             });
         });
     };
-    PolygonManager.prototype.getPolygonPath = function () {
-        // get the first path's coordinates as array
-        return this._polygons.values().next().value.then(function (polygon) {
-            return polygon.getPath().getArray();
-        });
+    PolygonManager.prototype.getPath = function (polygon) {
+        return this._polygons.get(polygon)
+            .then(function (polygon) { return polygon.getPath().getArray(); });
+    };
+    PolygonManager.prototype.getPaths = function (polygon) {
+        return this._polygons.get(polygon)
+            .then(function (polygon) { return polygon.getPaths().getArray().map(function (p) { return p.getArray(); }); });
     };
     return PolygonManager;
 }());

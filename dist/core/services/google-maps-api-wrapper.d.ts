@@ -26,7 +26,7 @@ export declare class GoogleMapsAPIWrapper {
      */
     createCircle(options: mapTypes.CircleOptions): Promise<mapTypes.Circle>;
     createPolyline(options: PolylineOptions): Promise<Polyline>;
-    createPolygon(options: mapTypes.PolygonOptions): Promise<mapTypes.Polyline>;
+    createPolygon(options: mapTypes.PolygonOptions): Promise<mapTypes.Polygon>;
     /**
      * Creates a new google.map.Data layer for the current map
      */

@@ -131,10 +131,6 @@ var AgmPolygon = (function () {
          * This even is fired when the Polygon is right-clicked on.
          */
         this.polyRightClick = new EventEmitter();
-        /**
-         * This event is fired when the Polygon path change.
-         */
-        this.pathChanged = new EventEmitter();
         this._polygonAddedToManager = false;
         this._subscriptions = [];
     }
@@ -150,7 +146,6 @@ var AgmPolygon = (function () {
             return;
         }
         this._polygonManager.setPolygonOptions(this, this._updatePolygonOptions(changes));
-        this.pathChanged.emit(this.getPolygonPath());
     };
     AgmPolygon.prototype._init = function () {
         this._polygonManager.addPolygon(this);
@@ -170,7 +165,6 @@ var AgmPolygon = (function () {
             { name: 'mouseout', handler: function (ev) { return _this.polyMouseOut.emit(ev); } },
             { name: 'mouseover', handler: function (ev) { return _this.polyMouseOver.emit(ev); } },
             { name: 'mouseup', handler: function (ev) { return _this.polyMouseUp.emit(ev); } },
-            { name: 'mouseup', handler: function (ev) { return _this.pathChanged.emit(ev); } },
             { name: 'rightclick', handler: function (ev) { return _this.polyRightClick.emit(ev); } },
         ];
         handlers.forEach(function (obj) {
@@ -186,9 +180,6 @@ var AgmPolygon = (function () {
             return obj;
         }, {});
     };
-    AgmPolygon.prototype.getPolygonPath = function () {
-        return this._polygonManager.getPolygonPath();
-    };
     /** @internal */
     AgmPolygon.prototype.id = function () { return this._id; };
     /** @internal */
@@ -196,6 +187,12 @@ var AgmPolygon = (function () {
         this._polygonManager.deletePolygon(this);
         // unsubscribe all registered observable subscriptions
         this._subscriptions.forEach(function (s) { return s.unsubscribe(); });
+    };
+    AgmPolygon.prototype.getPath = function () {
+        return this._polygonManager.getPath(this);
+    };
+    AgmPolygon.prototype.getPaths = function () {
+        return this._polygonManager.getPaths(this);
     };
     return AgmPolygon;
 }());
@@ -238,6 +235,5 @@ AgmPolygon.propDecorators = {
     'polyMouseOver': [{ type: Output },],
     'polyMouseUp': [{ type: Output },],
     'polyRightClick': [{ type: Output },],
-    'pathChanged': [{ type: Output },],
 };
 //# sourceMappingURL=polygon.js.map

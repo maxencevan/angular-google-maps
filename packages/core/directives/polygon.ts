@@ -189,11 +189,6 @@ export class AgmPolygon implements OnDestroy, OnChanges, AfterContentInit {
    */
   @Output() polyRightClick: EventEmitter<PolyMouseEvent> = new EventEmitter<PolyMouseEvent>();
 
-  /**
-   * This event is fired when the Polygon path change.
-   */
-  @Output() pathChanged: EventEmitter<any> = new EventEmitter<any>();
-
   private static _polygonOptionsAttributes: Array<string> = [
     'clickable', 'draggable', 'editable', 'fillColor', 'fillOpacity', 'geodesic', 'icon', 'map',
     'paths', 'strokeColor', 'strokeOpacity', 'strokeWeight', 'visible', 'zIndex', 'draggable',
@@ -220,7 +215,6 @@ export class AgmPolygon implements OnDestroy, OnChanges, AfterContentInit {
     }
 
     this._polygonManager.setPolygonOptions(this, this._updatePolygonOptions(changes));
-    this.pathChanged.emit(this.getPolygonPath());
   }
 
   private _init() {
@@ -241,7 +235,6 @@ export class AgmPolygon implements OnDestroy, OnChanges, AfterContentInit {
       { name: 'mouseout', handler: (ev: PolyMouseEvent) => this.polyMouseOut.emit(ev) },
       { name: 'mouseover', handler: (ev: PolyMouseEvent) => this.polyMouseOver.emit(ev) },
       { name: 'mouseup', handler: (ev: PolyMouseEvent) => this.polyMouseUp.emit(ev) },
-      { name: 'mouseup', handler: (ev: PolyMouseEvent) => this.pathChanged.emit(ev) },
       { name: 'rightclick', handler: (ev: PolyMouseEvent) => this.polyRightClick.emit(ev) },
     ];
     handlers.forEach((obj) => {
@@ -259,10 +252,6 @@ export class AgmPolygon implements OnDestroy, OnChanges, AfterContentInit {
       }, {});
   }
 
-  private getPolygonPath(): Promise<Array<any>> {
-    return this._polygonManager.getPolygonPath();
-  }
-
   /** @internal */
   id(): string { return this._id; }
 
@@ -271,5 +260,13 @@ export class AgmPolygon implements OnDestroy, OnChanges, AfterContentInit {
     this._polygonManager.deletePolygon(this);
     // unsubscribe all registered observable subscriptions
     this._subscriptions.forEach((s) => s.unsubscribe());
+  }
+
+  getPath(): Promise<Array<LatLng>> {
+    return this._polygonManager.getPath(this);
+  }
+
+  getPaths(): Promise<Array<Array<LatLng>>> {
+    return this._polygonManager.getPaths(this);
   }
 }

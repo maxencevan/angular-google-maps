@@ -160,10 +160,6 @@ export declare class AgmPolygon implements OnDestroy, OnChanges, AfterContentIni
      * This even is fired when the Polygon is right-clicked on.
      */
     polyRightClick: EventEmitter<PolyMouseEvent>;
-    /**
-     * This event is fired when the Polygon path change.
-     */
-    pathChanged: EventEmitter<any>;
     private static _polygonOptionsAttributes;
     private _id;
     private _polygonAddedToManager;
@@ -175,9 +171,10 @@ export declare class AgmPolygon implements OnDestroy, OnChanges, AfterContentIni
     private _init();
     private _addEventListeners();
     private _updatePolygonOptions(changes);
-    private getPolygonPath();
     /** @internal */
     id(): string;
     /** @internal */
     ngOnDestroy(): void;
+    getPath(): Promise<Array<LatLng>>;
+    getPaths(): Promise<Array<Array<LatLng>>>;
 }

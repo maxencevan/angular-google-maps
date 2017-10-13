@@ -2,6 +2,7 @@ import { NgZone } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { AgmPolyline } from '../../directives/polyline';
 import { GoogleMapsAPIWrapper } from '../google-maps-api-wrapper';
+import { LatLng } from '../google-maps-types';
 export declare class PolylineManager {
     private _mapsWrapper;
     private _zone;
@@ -15,4 +16,5 @@ export declare class PolylineManager {
     }): Promise<void>;
     deletePolyline(line: AgmPolyline): Promise<void>;
     createEventObservable<T>(eventName: string, line: AgmPolyline): Observable<T>;
+    getPath(polyline: AgmPolyline): Promise<Array<LatLng>>;
 }

@@ -4,7 +4,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { AgmPolygon } from '../../directives/polygon';
 import { GoogleMapsAPIWrapper } from '../google-maps-api-wrapper';
-import { Polygon } from '../google-maps-types';
+import { Polygon, LatLng } from '../google-maps-types';
 
 @Injectable()
 export class PolygonManager {
@@ -64,10 +64,14 @@ export class PolygonManager {
     });
   }
 
-  getPolygonPath(): Promise<Array<any>> {
-    // get the first path's coordinates as array
-    return this._polygons.values().next().value.then((polygon: any) => {
-      return polygon.getPath().getArray();
-    });
+  getPath(polygon: AgmPolygon): Promise<Array<LatLng>> {
+    return this._polygons.get(polygon)
+      .then((polygon) => polygon.getPath().getArray());
   }
+
+  getPaths(polygon: AgmPolygon): Promise<Array<Array<LatLng>>> {
+    return this._polygons.get(polygon)
+      .then((polygon) => polygon.getPaths().getArray().map((p) => p.getArray()));
+  }
+
 }

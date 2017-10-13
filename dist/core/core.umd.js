@@ -463,11 +463,13 @@ var PolygonManager = (function () {
             });
         });
     };
-    PolygonManager.prototype.getPolygonPath = function () {
-        // get the first path's coordinates as array
-        return this._polygons.values().next().value.then(function (polygon) {
-            return polygon.getPath().getArray();
-        });
+    PolygonManager.prototype.getPath = function (polygon) {
+        return this._polygons.get(polygon)
+            .then(function (polygon) { return polygon.getPath().getArray(); });
+    };
+    PolygonManager.prototype.getPaths = function (polygon) {
+        return this._polygons.get(polygon)
+            .then(function (polygon) { return polygon.getPaths().getArray().map(function (p) { return p.getArray(); }); });
     };
     return PolygonManager;
 }());
@@ -540,6 +542,10 @@ var PolylineManager = (function () {
                 l.addListener(eventName, function (e) { return _this._zone.run(function () { return observer.next(e); }); });
             });
         });
+    };
+    PolylineManager.prototype.getPath = function (polyline) {
+        return this._polylines.get(polyline)
+            .then(function (polyline) { return polyline.getPath().getArray(); });
     };
     return PolylineManager;
 }());
@@ -2172,10 +2178,6 @@ var AgmPolygon = (function () {
          * This even is fired when the Polygon is right-clicked on.
          */
         this.polyRightClick = new _angular_core.EventEmitter();
-        /**
-         * This event is fired when the Polygon path change.
-         */
-        this.pathChanged = new _angular_core.EventEmitter();
         this._polygonAddedToManager = false;
         this._subscriptions = [];
     }
@@ -2191,7 +2193,6 @@ var AgmPolygon = (function () {
             return;
         }
         this._polygonManager.setPolygonOptions(this, this._updatePolygonOptions(changes));
-        this.pathChanged.emit(this.getPolygonPath());
     };
     AgmPolygon.prototype._init = function () {
         this._polygonManager.addPolygon(this);
@@ -2211,7 +2212,6 @@ var AgmPolygon = (function () {
             { name: 'mouseout', handler: function (ev) { return _this.polyMouseOut.emit(ev); } },
             { name: 'mouseover', handler: function (ev) { return _this.polyMouseOver.emit(ev); } },
             { name: 'mouseup', handler: function (ev) { return _this.polyMouseUp.emit(ev); } },
-            { name: 'mouseup', handler: function (ev) { return _this.pathChanged.emit(ev); } },
             { name: 'rightclick', handler: function (ev) { return _this.polyRightClick.emit(ev); } },
         ];
         handlers.forEach(function (obj) {
@@ -2227,9 +2227,6 @@ var AgmPolygon = (function () {
             return obj;
         }, {});
     };
-    AgmPolygon.prototype.getPolygonPath = function () {
-        return this._polygonManager.getPolygonPath();
-    };
     /** @internal */
     AgmPolygon.prototype.id = function () { return this._id; };
     /** @internal */
@@ -2237,6 +2234,12 @@ var AgmPolygon = (function () {
         this._polygonManager.deletePolygon(this);
         // unsubscribe all registered observable subscriptions
         this._subscriptions.forEach(function (s) { return s.unsubscribe(); });
+    };
+    AgmPolygon.prototype.getPath = function () {
+        return this._polygonManager.getPath(this);
+    };
+    AgmPolygon.prototype.getPaths = function () {
+        return this._polygonManager.getPaths(this);
     };
     return AgmPolygon;
 }());
@@ -2278,7 +2281,6 @@ AgmPolygon.propDecorators = {
     'polyMouseOver': [{ type: _angular_core.Output },],
     'polyMouseUp': [{ type: _angular_core.Output },],
     'polyRightClick': [{ type: _angular_core.Output },],
-    'pathChanged': [{ type: _angular_core.Output },],
 };
 
 /**
@@ -2484,6 +2486,9 @@ var AgmPolyline = (function () {
         this._polylineManager.deletePolyline(this);
         // unsubscribe all registered observable subscriptions
         this._subscriptions.forEach(function (s) { return s.unsubscribe(); });
+    };
+    AgmPolyline.prototype.getPath = function () {
+        return this._polylineManager.getPath(this);
     };
     return AgmPolyline;
 }());

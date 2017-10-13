@@ -172,6 +172,9 @@ var AgmPolyline = (function () {
         // unsubscribe all registered observable subscriptions
         this._subscriptions.forEach(function (s) { return s.unsubscribe(); });
     };
+    AgmPolyline.prototype.getPath = function () {
+        return this._polylineManager.getPath(this);
+    };
     return AgmPolyline;
 }());
 export { AgmPolyline };
