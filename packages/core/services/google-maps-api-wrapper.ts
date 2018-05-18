@@ -25,10 +25,12 @@ export class GoogleMapsAPIWrapper {
   }
 
   createMap(el: HTMLElement, mapOptions: mapTypes.MapOptions): Promise<void> {
-    return this._loader.load().then(() => {
-      const map = new google.maps.Map(el, mapOptions);
-      this._mapResolver(<mapTypes.GoogleMap>map);
-      return;
+    return this._zone.runOutsideAngular( () => {
+      return this._loader.load().then(() => {
+        const map = new google.maps.Map(el, mapOptions);
+        this._mapResolver(<mapTypes.GoogleMap>map);
+        return;
+      });
     });
   }
 
@@ -113,6 +115,10 @@ export class GoogleMapsAPIWrapper {
 
   getBounds(): Promise<mapTypes.LatLngBounds> {
     return this._map.then((map: mapTypes.GoogleMap) => map.getBounds());
+  }
+
+  getMapTypeId(): Promise<mapTypes.MapTypeId> {
+    return this._map.then((map: mapTypes.GoogleMap) => map.getMapTypeId());
   }
 
   setZoom(zoom: number): Promise<void> {
