@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { AgmCoreModule } from '@agm/core';
+import { AgmCoreModule } from '../core/core.module';
 import { AgmMarkerCluster } from './directives/marker-cluster';
 var AgmJsMarkerClustererModule = /** @class */ (function () {
     function AgmJsMarkerClustererModule() {

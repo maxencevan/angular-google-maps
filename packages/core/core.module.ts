@@ -1,19 +1,19 @@
-import {ModuleWithProviders, NgModule} from '@angular/core';
-import {AgmMap} from './directives/map';
-import {AgmCircle} from './directives/circle';
-import {AgmRectangle} from './directives/rectangle';
-import {AgmInfoWindow} from './directives/info-window';
-import {AgmMarker} from './directives/marker';
-import {AgmPolygon} from './directives/polygon';
-import {AgmPolyline} from './directives/polyline';
-import {AgmPolylinePoint} from './directives/polyline-point';
-import {AgmKmlLayer} from './directives/kml-layer';
-import {AgmDataLayer} from './directives/data-layer';
-import {LazyMapsAPILoader} from './services/maps-api-loader/lazy-maps-api-loader';
-import {LAZY_MAPS_API_CONFIG, LazyMapsAPILoaderConfigLiteral} from './services/maps-api-loader/lazy-maps-api-loader';
-import {MapsAPILoader} from './services/maps-api-loader/maps-api-loader';
-import {BROWSER_GLOBALS_PROVIDERS} from './utils/browser-globals';
-import {AgmFitBounds} from '@agm/core/directives/fit-bounds';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { AgmMap } from './directives/map';
+import { AgmCircle } from './directives/circle';
+import { AgmRectangle } from './directives/rectangle';
+import { AgmInfoWindow } from './directives/info-window';
+import { AgmMarker } from './directives/marker';
+import { AgmPolygon } from './directives/polygon';
+import { AgmPolyline } from './directives/polyline';
+import { AgmPolylinePoint } from './directives/polyline-point';
+import { AgmKmlLayer } from './directives/kml-layer';
+import { AgmDataLayer } from './directives/data-layer';
+import { LazyMapsAPILoader } from './services/maps-api-loader/lazy-maps-api-loader';
+import { LAZY_MAPS_API_CONFIG, LazyMapsAPILoaderConfigLiteral } from './services/maps-api-loader/lazy-maps-api-loader';
+import { MapsAPILoader } from './services/maps-api-loader/maps-api-loader';
+import { BROWSER_GLOBALS_PROVIDERS } from './utils/browser-globals';
+import { AgmFitBounds } from './directives/fit-bounds';
 
 /**
  * @internal
@@ -30,7 +30,7 @@ export function coreDirectives() {
  * The angular-google-maps core module. Contains all Directives/Services/Pipes
  * of the core module. Please use `AgmCoreModule.forRoot()` in your app module.
  */
-@NgModule({declarations: coreDirectives(), exports: coreDirectives()})
+@NgModule({ declarations: coreDirectives(), exports: coreDirectives() })
 export class AgmCoreModule {
   /**
    * Please use this method when you register the module at the root level.
@@ -39,8 +39,8 @@ export class AgmCoreModule {
     return {
       ngModule: AgmCoreModule,
       providers: [
-        ...BROWSER_GLOBALS_PROVIDERS, {provide: MapsAPILoader, useClass: LazyMapsAPILoader},
-        {provide: LAZY_MAPS_API_CONFIG, useValue: lazyMapsAPILoaderConfig}
+        ...BROWSER_GLOBALS_PROVIDERS, { provide: MapsAPILoader, useClass: LazyMapsAPILoader },
+        { provide: LAZY_MAPS_API_CONFIG, useValue: lazyMapsAPILoaderConfig }
       ],
     };
   }
