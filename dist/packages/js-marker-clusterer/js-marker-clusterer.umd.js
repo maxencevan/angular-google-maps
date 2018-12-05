@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('js-marker-clusterer'), require('@agm/core'), require('rxjs/operators')) :
-    typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs', 'js-marker-clusterer', '@agm/core', 'rxjs/operators'], factory) :
-    (factory((global.ngmaps = global.ngmaps || {}, global.ngmaps.jsMarkerClusterer = {}),global.ng.core,null,global.MarkerClusterer,global.ngmaps.core,null));
-}(this, (function (exports,core,rxjs,jsMarkerClusterer,core$1,operators) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('js-marker-clusterer'), require('rxjs/operators')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs', 'js-marker-clusterer', 'rxjs/operators'], factory) :
+    (factory((global.ngmaps = global.ngmaps || {}, global.ngmaps.jsMarkerClusterer = {}),global.ng.core,null,global.MarkerClusterer,null));
+}(this, (function (exports,core,rxjs,jsMarkerClusterer,operators) { 'use strict';
 
     var MapsAPILoader = /** @class */ (function () {
         function MapsAPILoader() {
@@ -394,6 +394,90 @@
         return ClusterManager;
     }(MarkerManager));
 
+    var InfoWindowManager = /** @class */ (function () {
+        function InfoWindowManager(_mapsWrapper, _zone, _markerManager) {
+            this._mapsWrapper = _mapsWrapper;
+            this._zone = _zone;
+            this._markerManager = _markerManager;
+            this._infoWindows = new Map();
+        }
+        InfoWindowManager.prototype.deleteInfoWindow = function (infoWindow) {
+            var _this = this;
+            var iWindow = this._infoWindows.get(infoWindow);
+            if (iWindow == null) {
+                // info window already deleted
+                return Promise.resolve();
+            }
+            return iWindow.then(function (i) {
+                return _this._zone.run(function () {
+                    i.close();
+                    _this._infoWindows.delete(infoWindow);
+                });
+            });
+        };
+        InfoWindowManager.prototype.setPosition = function (infoWindow) {
+            return this._infoWindows.get(infoWindow).then(function (i) { return i.setPosition({
+                lat: infoWindow.latitude,
+                lng: infoWindow.longitude
+            }); });
+        };
+        InfoWindowManager.prototype.setZIndex = function (infoWindow) {
+            return this._infoWindows.get(infoWindow)
+                .then(function (i) { return i.setZIndex(infoWindow.zIndex); });
+        };
+        InfoWindowManager.prototype.open = function (infoWindow) {
+            var _this = this;
+            return this._infoWindows.get(infoWindow).then(function (w) {
+                if (infoWindow.hostMarker != null) {
+                    return _this._markerManager.getNativeMarker(infoWindow.hostMarker).then(function (marker) {
+                        return _this._mapsWrapper.getNativeMap().then(function (map) { return w.open(map, marker); });
+                    });
+                }
+                return _this._mapsWrapper.getNativeMap().then(function (map) { return w.open(map); });
+            });
+        };
+        InfoWindowManager.prototype.close = function (infoWindow) {
+            return this._infoWindows.get(infoWindow).then(function (w) { return w.close(); });
+        };
+        InfoWindowManager.prototype.setOptions = function (infoWindow, options) {
+            return this._infoWindows.get(infoWindow).then(function (i) { return i.setOptions(options); });
+        };
+        InfoWindowManager.prototype.addInfoWindow = function (infoWindow) {
+            var options = {
+                content: infoWindow.content,
+                maxWidth: infoWindow.maxWidth,
+                zIndex: infoWindow.zIndex,
+                disableAutoPan: infoWindow.disableAutoPan
+            };
+            if (typeof infoWindow.latitude === 'number' && typeof infoWindow.longitude === 'number') {
+                options.position = { lat: infoWindow.latitude, lng: infoWindow.longitude };
+            }
+            var infoWindowPromise = this._mapsWrapper.createInfoWindow(options);
+            this._infoWindows.set(infoWindow, infoWindowPromise);
+        };
+        /**
+         * Creates a Google Maps event listener for the given InfoWindow as an Observable
+         */
+        InfoWindowManager.prototype.createEventObservable = function (eventName, infoWindow) {
+            var _this = this;
+            return new rxjs.Observable(function (observer) {
+                _this._infoWindows.get(infoWindow).then(function (i) {
+                    i.addListener(eventName, function (e) { return _this._zone.run(function () { return observer.next(e); }); });
+                });
+            });
+        };
+        InfoWindowManager.decorators = [
+            { type: core.Injectable },
+        ];
+        /** @nocollapse */
+        InfoWindowManager.ctorParameters = function () { return [
+            { type: GoogleMapsAPIWrapper },
+            { type: core.NgZone },
+            { type: MarkerManager }
+        ]; };
+        return InfoWindowManager;
+    }());
+
     /**
      * AgmMarkerCluster clusters map marker if they are near together
      *
@@ -477,8 +561,8 @@
                         selector: 'agm-marker-cluster',
                         providers: [
                             ClusterManager,
-                            { provide: core$1.MarkerManager, useExisting: ClusterManager },
-                            core$1.InfoWindowManager,
+                            { provide: MarkerManager, useExisting: ClusterManager },
+                            InfoWindowManager,
                         ]
                     },] },
         ];
@@ -675,90 +759,6 @@
             { type: core.NgZone }
         ]; };
         return RectangleManager;
-    }());
-
-    var InfoWindowManager = /** @class */ (function () {
-        function InfoWindowManager(_mapsWrapper, _zone, _markerManager) {
-            this._mapsWrapper = _mapsWrapper;
-            this._zone = _zone;
-            this._markerManager = _markerManager;
-            this._infoWindows = new Map();
-        }
-        InfoWindowManager.prototype.deleteInfoWindow = function (infoWindow) {
-            var _this = this;
-            var iWindow = this._infoWindows.get(infoWindow);
-            if (iWindow == null) {
-                // info window already deleted
-                return Promise.resolve();
-            }
-            return iWindow.then(function (i) {
-                return _this._zone.run(function () {
-                    i.close();
-                    _this._infoWindows.delete(infoWindow);
-                });
-            });
-        };
-        InfoWindowManager.prototype.setPosition = function (infoWindow) {
-            return this._infoWindows.get(infoWindow).then(function (i) { return i.setPosition({
-                lat: infoWindow.latitude,
-                lng: infoWindow.longitude
-            }); });
-        };
-        InfoWindowManager.prototype.setZIndex = function (infoWindow) {
-            return this._infoWindows.get(infoWindow)
-                .then(function (i) { return i.setZIndex(infoWindow.zIndex); });
-        };
-        InfoWindowManager.prototype.open = function (infoWindow) {
-            var _this = this;
-            return this._infoWindows.get(infoWindow).then(function (w) {
-                if (infoWindow.hostMarker != null) {
-                    return _this._markerManager.getNativeMarker(infoWindow.hostMarker).then(function (marker) {
-                        return _this._mapsWrapper.getNativeMap().then(function (map) { return w.open(map, marker); });
-                    });
-                }
-                return _this._mapsWrapper.getNativeMap().then(function (map) { return w.open(map); });
-            });
-        };
-        InfoWindowManager.prototype.close = function (infoWindow) {
-            return this._infoWindows.get(infoWindow).then(function (w) { return w.close(); });
-        };
-        InfoWindowManager.prototype.setOptions = function (infoWindow, options) {
-            return this._infoWindows.get(infoWindow).then(function (i) { return i.setOptions(options); });
-        };
-        InfoWindowManager.prototype.addInfoWindow = function (infoWindow) {
-            var options = {
-                content: infoWindow.content,
-                maxWidth: infoWindow.maxWidth,
-                zIndex: infoWindow.zIndex,
-                disableAutoPan: infoWindow.disableAutoPan
-            };
-            if (typeof infoWindow.latitude === 'number' && typeof infoWindow.longitude === 'number') {
-                options.position = { lat: infoWindow.latitude, lng: infoWindow.longitude };
-            }
-            var infoWindowPromise = this._mapsWrapper.createInfoWindow(options);
-            this._infoWindows.set(infoWindow, infoWindowPromise);
-        };
-        /**
-         * Creates a Google Maps event listener for the given InfoWindow as an Observable
-         */
-        InfoWindowManager.prototype.createEventObservable = function (eventName, infoWindow) {
-            var _this = this;
-            return new rxjs.Observable(function (observer) {
-                _this._infoWindows.get(infoWindow).then(function (i) {
-                    i.addListener(eventName, function (e) { return _this._zone.run(function () { return observer.next(e); }); });
-                });
-            });
-        };
-        InfoWindowManager.decorators = [
-            { type: core.Injectable },
-        ];
-        /** @nocollapse */
-        InfoWindowManager.ctorParameters = function () { return [
-            { type: GoogleMapsAPIWrapper },
-            { type: core.NgZone },
-            { type: MarkerManager }
-        ]; };
-        return InfoWindowManager;
     }());
 
     var PolygonManager = /** @class */ (function () {

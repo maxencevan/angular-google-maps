@@ -1,6 +1,7 @@
 import { Directive, Input } from '@angular/core';
 import { ClusterManager } from '../services/managers/cluster-manager';
-import { MarkerManager, InfoWindowManager } from '@agm/core';
+import { MarkerManager } from '../../core/services/managers/marker-manager';
+import { InfoWindowManager } from '../../core/services/managers/info-window-manager';
 /**
  * AgmMarkerCluster clusters map marker if they are near together
  *
