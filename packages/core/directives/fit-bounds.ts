@@ -2,7 +2,7 @@ import { Directive, OnInit, Self, OnDestroy, Input, OnChanges, SimpleChanges } f
 import { FitBoundsService, FitBoundsAccessor, FitBoundsDetails } from '../services/fit-bounds';
 import { Subscription, Subject } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { LatLng, LatLngLiteral } from '@agm/core';
+import { LatLng, LatLngLiteral } from '../index';
 
 /**
  * Adds the given directive to the auto fit bounds feature when the value is true.
@@ -26,7 +26,7 @@ export class AgmFitBounds implements OnInit, OnDestroy, OnChanges {
   constructor(
     @Self() private readonly _fitBoundsAccessor: FitBoundsAccessor,
     private readonly _fitBoundsService: FitBoundsService
-  ) {}
+  ) { }
 
   /**
    * @internal
