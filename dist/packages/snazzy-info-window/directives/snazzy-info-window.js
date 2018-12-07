@@ -1,5 +1,5 @@
 import { Host, SkipSelf, EventEmitter, Input, ViewContainerRef, TemplateRef, Output, Optional, ElementRef, Component, ViewChild, ContentChild } from '@angular/core';
-import { AgmMarker, GoogleMapsAPIWrapper, MarkerManager, MapsAPILoader } from '@agm/core';
+import { AgmMarker, GoogleMapsAPIWrapper, MarkerManager, MapsAPILoader } from '../../core/index';
 var AgmSnazzyInfoWindow = /** @class */ (function () {
     function AgmSnazzyInfoWindow(_marker, _wrapper, _manager, _loader) {
         this._marker = _marker;

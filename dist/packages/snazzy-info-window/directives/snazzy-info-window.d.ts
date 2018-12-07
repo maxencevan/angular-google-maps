@@ -1,5 +1,5 @@
 import { OnChanges, AfterViewInit, EventEmitter, SimpleChanges, ViewContainerRef, TemplateRef, OnDestroy, ElementRef } from '@angular/core';
-import { AgmMarker, GoogleMapsAPIWrapper, MarkerManager, MapsAPILoader } from '@agm/core';
+import { AgmMarker, GoogleMapsAPIWrapper, MarkerManager, MapsAPILoader } from '../../core/index';
 export declare class AgmSnazzyInfoWindow implements AfterViewInit, OnDestroy, OnChanges {
     private _marker;
     private _wrapper;
